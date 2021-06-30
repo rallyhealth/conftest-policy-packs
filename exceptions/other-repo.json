@@ -1,0 +1,12 @@
+{
+  "__tests__/integration/files/test.dockerfile": [
+    {
+      "policy_id": "CTNRSEC-0002",
+      "jira_ticket": "JIRA-0001"
+    },
+    {
+      "policy_id": "CTNRSEC-0004",
+      "jira_ticket": "JIRA-0002"
+    }
+  ]
+}

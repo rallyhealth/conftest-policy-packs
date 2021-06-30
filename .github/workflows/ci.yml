@@ -1,0 +1,70 @@
+name: Conftest CI
+
+on:
+  pull_request:
+    branches:
+      - main
+
+env:
+  CONFTEST_VERSION: 0.25.0
+  OPA_VERSION: 0.29.4
+
+jobs:
+  verify:
+    name: 'Validate Rego Policies'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: sh
+    container: openpolicyagent/conftest:v${{ env.CONFTEST_VERSION }}
+
+    steps:
+      - uses: actions/checkout@v2.3.4
+
+      - name: 'Conftest Verify'
+        run: make verify
+
+  lint:
+    name: 'Pre-Commit Checks'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2.3.4
+
+      - uses: actions/setup-python@v2.2.2
+        with:
+          python-version: '3.9'
+
+      - uses: actions/setup-go@v2.1.3
+        with:
+          go-version: '^1.16'
+
+      - name: 'Install Dependencies'
+        run: |
+          pip install pre-commit
+
+          wget https://github.com/open-policy-agent/conftest/releases/download/v${{ env.CONFTEST_VERSION }}/conftest_${{ env.CONFTEST_VERSION }}_Linux_x86_64.tar.gz
+          tar xzf conftest_${{ env.CONFTEST_VERSION }}_Linux_x86_64.tar.gz
+
+          curl -L -o opa https://openpolicyagent.org/downloads/v${{ env.OPA_VERSION }}/opa_linux_amd64
+          chmod 755 ./opa
+
+          echo "Conftest:"
+          ./conftest --version
+          echo "OPA:"
+          ./opa version
+
+      - name: 'Pre-Commit Checks'
+        run: pre-commit run -a
+
+  test:
+    name: 'Test Policies'
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2.3.4
+
+      - name: 'OPA Test'
+        uses: docker://openpolicyagent/opa:${{ env.OPA_VERSION }}-rootless
+        with:
+          entrypoint: /opa
+          args: test ./policies
