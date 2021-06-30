@@ -1,0 +1,19 @@
+repos:
+  - repo: local
+    hooks:
+      - id: conftest-format
+        name: Format Rego Policies
+        entry: scripts/lint.sh
+        language: script
+        files: policies/
+
+      - id: gen-policies
+        name: Generate Policy Documentation
+        entry: scripts/build-policies.sh
+        language: script
+        files: policies/
+
+      - id: full-coverage
+        name: Rego policy code coverage
+        entry: scripts/rego-coverage.sh
+        language: script
