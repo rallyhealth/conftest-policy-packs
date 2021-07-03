@@ -21,10 +21,9 @@ violation[msg] {
 
 	# Count decreases if any of the approved registries appears in the string.
 	# So any value less than the length of the approved registries means that an approved registry is being used
-	# So we want a violation if the length equals the array. Can't be possible to be larger but hey, may as well
+	# So we want a violation if the length equals the array. Can't be possible to be larger but hey, may as well include >=
 	count({y | y := approved_private_registries[_]; not startswith(val[0], y)}) >= count(approved_private_registries)
 	msg := sprintf("%s: Dockerfiles must pull images from an approved private registry (`FROM my.private.registry/...`). The image `%s` does not pull from an approved private registry. The following are approved registries: `%v`.", [policyID, val, approved_private_registries])
-	trace(msg)
 }
 
 # FROM check where a variable is used for the image
@@ -53,8 +52,7 @@ violation[msg] {
 
 	# Count decreases if any of the approved registries appears in the string.
 	# So any value less than the length of the approved registries means that an approved registry is being used
-	# So we want a violation if the length equals the array. Can't be possible to be larger but hey, may as well
+	# So we want a violation if the length equals the array. Can't be possible to be larger but hey, may as well include >=
 	count({y | y := approved_private_registries[_]; not startswith(imageInArg, y)}) >= count(approved_private_registries)
 	msg := sprintf("%s: Dockerfiles must pull images from an approved private registry (`FROM my.private.registry/...`). The image `%s` in variable `%s` does not pull from an approved private registry. The following are approved registries: `%v`.", [policyID, imageInArg, argNameAndValue[0], approved_private_registries])
-	trace(msg)
 }
