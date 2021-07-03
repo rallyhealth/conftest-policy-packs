@@ -1,4 +1,4 @@
-# rally-conftest-policies
+# Conftest Policy Packs
 
 Centralized OPA policy workflow for Conftest-based Compliance-as-Code evaluations at CI-speed.
 

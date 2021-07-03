@@ -1,0 +1,3 @@
+approved_private_registries:
+  - 'my.private.registry'
+  - 'other.private.registry'
