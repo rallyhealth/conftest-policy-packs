@@ -3,11 +3,7 @@
 .PHONY: install
 install:
 	brew install conftest golang jq pre-commit
-	make ci-install
-
-.PHONY: ci-install
-ci-install:
-	GO11MODULE=on go get github.com/plexsystems/konstraint
+	go install github.com/plexsystems/konstraint@latest
 	pre-commit install
 
 # Keep an eye on https://github.com/open-policy-agent/conftest/issues/518 for when coverage is supported
@@ -18,13 +14,6 @@ test:
 .PHONY: fmt
 fmt:
 	conftest fmt policies/
-
-.PHONY: test-action
-test-action:
-	# Handle both OSX and Linux default homebrew installs
-	if [ ! -f /usr/local/bin/act ] && [ ! -f /home/linuxbrew/.linuxbrew/bin/act ]; then brew install act; fi;
-	act -j lint
-	act -j test
 
 .PHONY: docs
 docs:
