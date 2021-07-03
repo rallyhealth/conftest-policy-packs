@@ -6,6 +6,12 @@ install:
 	go install github.com/plexsystems/konstraint@latest
 	pre-commit install
 
+.PHONY: update
+update:
+	brew upgrade conftest golang jq pre-commit
+	go install github.com/plexsystems/konstraint@latest
+	pre-commit autoupdate
+
 # Keep an eye on https://github.com/open-policy-agent/conftest/issues/518 for when coverage is supported
 .PHONY: test
 test:
