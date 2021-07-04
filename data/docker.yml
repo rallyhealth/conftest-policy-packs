@@ -1,3 +1,7 @@
 approved_private_registries:
   - 'my.private.registry'
   - 'other.private.registry'
+
+excepted_env_keys:
+  # amplitude's api key is bundled into the frontend and is not considered a secret
+  - amplitude

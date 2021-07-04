@@ -7,8 +7,8 @@ repos:
         language: script
         files: policies/
 
-#      - id: gen-policies
-#        name: Generate Policy Documentation
-#        entry: scripts/build-policies.sh
-#        language: script
-#        files: policies/
+      - id: gen-policies
+        name: Generate Policy Documentation
+        entry: scripts/build-policies.sh
+        language: script
+        files: policies/
