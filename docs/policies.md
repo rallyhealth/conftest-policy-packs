@@ -2,8 +2,43 @@
 
 ## Violations
 
+* [AWSSEC-0001: Encrypt S3 Buckets](#awssec-0001-encrypt-s3-buckets)
 * [CTNRSEC-0001: Dockerfiles must pull from an approved private registry](#ctnrsec-0001-dockerfiles-must-pull-from-an-approved-private-registry)
 * [CTNRSEC-0002: Dockerfiles should not use environment variables for sensitive values](#ctnrsec-0002-dockerfiles-should-not-use-environment-variables-for-sensitive-values)
+* [PKGSEC-0001: NodeJS packages must be published under an organization scope](#pkgsec-0001-nodejs-packages-must-be-published-under-an-organization-scope)
+
+## AWSSEC-0001: Encrypt S3 Buckets
+
+**Severity:** Violation
+
+**Resources:** Any Resource
+
+S3 Buckets must have server-side encryption enabled.
+See <https://www.terraform.io/docs/backends/types/s3.html#encrypt>.
+
+While the security benefits of server-side bucket encryption are nebulous given practical threat scenarios,
+those wishing to apply such a control may do so with this policy.
+You may also be required to enforce this as a compliance checkbox.
+
+### Rego
+
+```rego
+package terraform_encrypt_s3_buckets
+
+import data.util_functions
+
+policyID := "AWSSEC-0001"
+
+violation[{"policyId": policyID, "msg": msg}] {
+  resource := input.resource.aws_s3_bucket
+  a_resource := resource[name]
+  not util_functions.has_key(a_resource, "server_side_encryption_configuration")
+
+  msg := sprintf("Missing S3 encryption for `%s`. Required flag: `server_side_encryption_configuration`", [name])
+}
+```
+
+_source: [https://github.com/RallyHealth/conftest-policy-packs/policies/terraform/encrypt_s3_buckets/src.rego](https://github.com/RallyHealth/conftest-policy-packs/policies/terraform/encrypt_s3_buckets/src.rego)_
 
 ## CTNRSEC-0001: Dockerfiles must pull from an approved private registry
 
@@ -21,8 +56,11 @@ package docker_pull_from_registry
 
 import data.approved_private_registries
 import data.docker_utils
+import data.util_functions
 
 policyID := "CTNRSEC-0001"
+
+cmds := ["env", "arg"]
 
 violation[{"policyId": policyID, "msg": msg}] {
   input[i].Cmd == "from"
@@ -31,10 +69,7 @@ violation[{"policyId": policyID, "msg": msg}] {
   not docker_utils.is_a_multistage_build(input, val[0])
   not docker_utils.from_scratch(val[0])
 
-  # Count decreases if any of the approved registries appears in the string.
-  # So any value less than the length of the approved registries means that an approved registry is being used
-  # So we want a violation if the length equals the array. Can't be possible to be larger but hey, may as well include >=
-  count({y | y := approved_private_registries[_]; not startswith(val[0], y)}) >= count(approved_private_registries)
+  not util_functions.item_contained_in_list(val[0], approved_private_registries)
   msg := sprintf("Dockerfiles must pull images from an approved private registry (`FROM my.private.registry/...`). The image `%s` does not pull from an approved private registry. The following are approved registries: `%v`.", [val, approved_private_registries])
 }
 
@@ -50,21 +85,18 @@ violation[{"policyId": policyID, "msg": msg}] {
   # Drop the version, if present, to make it easier to find the right variable
   variableName := split(variableNameWithVersion, ":")[0]
 
-  input[j].Cmd == "arg"
+  input[j].Cmd == cmds[_]
   argCmd := input[j].Value[0]
 
-  # ARG is a match for the variable we're looking for
+  # ARG or ENV is a match for the variable we're looking for
   startswith(argCmd, variableName)
 
-  # Grab the value of the ARGument
+  # Grab the value of the ARGument or ENV var
   # e.g. ARG MYIMAGE=ubuntu:latest => ubuntu:latest
   argNameAndValue := split(argCmd, "=")
   imageInArg := trim(argNameAndValue[1], "\"")
 
-  # Count decreases if any of the approved registries appears in the string.
-  # So any value less than the length of the approved registries means that an approved registry is being used
-  # So we want a violation if the length equals the array. Can't be possible to be larger but hey, may as well include >=
-  count({y | y := approved_private_registries[_]; not startswith(imageInArg, y)}) >= count(approved_private_registries)
+  not util_functions.item_contained_in_list(imageInArg, approved_private_registries)
   msg := sprintf("Dockerfiles must pull images from an approved private registry (`FROM my.private.registry/...`). The image `%s` in variable `%s` does not pull from an approved private registry. The following are approved registries: `%v`.", [imageInArg, argNameAndValue[0], approved_private_registries])
 }
 ```
@@ -136,3 +168,62 @@ violation[{"policyId": policyID, "msg": msg}] {
 ```
 
 _source: [https://github.com/RallyHealth/conftest-policy-packs/policies/docker/sensitive_keys_in_env_args/src.rego](https://github.com/RallyHealth/conftest-policy-packs/policies/docker/sensitive_keys_in_env_args/src.rego)_
+
+## PKGSEC-0001: NodeJS packages must be published under an organization scope
+
+**Severity:** Violation
+
+**Resources:** Any Resource
+
+NodeJS packages are subject to typosquatting, in which a malicious package is published
+with a slight misspelling. The aim is to infect end users who misspell your package.
+While this relies on end user misconfiguration, package owners can still take steps to reduce the viability
+of such a mistake.
+
+This can be avoided by scoping an organizational package beneath an [organization scope](https://docs.npmjs.com/cli/v7/using-npm/scope).
+Organizations publishing packages to a private registry can use a private organization scope.
+
+Scopes are a way of grouping related packages together, and also affect a few things about the way npm treats the package.
+Each npm user/organization has their own scope, and only you can add packages in your scope.
+This means you don't have to worry about someone taking your package name ahead of you.
+Thus it is also a good way to signal official packages for organizations.
+
+### Rego
+
+```rego
+package nodejs_package_must_have_org_scope
+
+import data.approved_org_scopes
+import data.util_functions
+
+policyID := "PKGSEC-0001"
+
+is_package_json(resource) {
+  util_functions.has_key(resource, "name")
+  util_functions.has_key(resource, "version")
+}
+
+has_org_scope(name) {
+  startswith(name, "@")
+}
+
+violation[{"policyId": policyID, "msg": msg}] {
+  is_package_json(input)
+  package_name := input.name
+  not has_org_scope(package_name)
+  msg := sprintf("NodeJS packages must be wrapped beneath an organization scope (e.g. `@orgscope/mypackage`). `%s` does not use any organization scope. Approved scopes are: `%v`.", [package_name, approved_org_scopes])
+  trace(sprintf("%v", [{"policyId": policyID, "msg": msg}]))
+}
+
+violation[{"policyId": policyID, "msg": msg}] {
+  is_package_json(input)
+  package_name := input.name
+  has_org_scope(package_name)
+  org_name := substring(package_name, 1, -1)
+  not util_functions.item_contained_in_list(org_name, approved_org_scopes)
+  msg := sprintf("NodeJS packages must be wrapped beneath an organization scope (e.g. `@orgscope/mypackage`). `%s` does not use an approved organization scope. Approved scopes are: `%v`.", [package_name, approved_org_scopes])
+  trace(sprintf("%v", [{"policyId": policyID, "msg": msg}]))
+}
+```
+
+_source: [https://github.com/RallyHealth/conftest-policy-packs/policies/packages/nodejs_package_must_use_org_scope/src.rego](https://github.com/RallyHealth/conftest-policy-packs/policies/packages/nodejs_package_must_use_org_scope/src.rego)_

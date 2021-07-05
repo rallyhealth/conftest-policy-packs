@@ -54,6 +54,17 @@ test_dockerfile_with_image_in_arg {
 	]
 }
 
+test_dockerfile_with_image_in_env {
+	count(violation) == 1 with input as [
+		{"Cmd": "env", "Flags": [], "JSON": false, "SubCmd": "", "Value": ["AIRFLOW_VERSION=\"1.10.12\""]},
+		{"Cmd": "env", "Flags": [], "JSON": false, "SubCmd": "", "Value": ["AIRFLOW_PYTHON_VERSION=\"3.6\""]},
+		{"Cmd": "env", "Flags": [], "JSON": false, "SubCmd": "", "Value": ["AIRFLOW_IMAGE=\"apache/airflow\""]},
+		{"Cmd": "from", "Flags": [], "JSON": false, "SubCmd": "", "Value": ["$AIRFLOW_IMAGE:$AIRFLOW_PYTHON_VERSION", "as", "imageWithVariables"]},
+		{"Cmd": "from", "Flags": [], "JSON": false, "SubCmd": "", "Value": ["imageWithVariables", "AS", "multiStage"]},
+		{"Cmd": "cmd", "Flags": [], "JSON": true, "SubCmd": "", "Value": ["echo"]},
+	]
+}
+
 test_dockerfile_with_multistage_build {
 	count(violation) == 0 with input as [
 		{"Cmd": "from", "Flags": [], "JSON": false, "SubCmd": "", "Value": ["my.private.registry/ubuntu:20.04", "AS", "builder"]},

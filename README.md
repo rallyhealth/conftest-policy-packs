@@ -7,6 +7,12 @@ They are enforced by a homegrown GitHub App running on AWS ECS to evaluate every
 
 # Usage
 
+## Policy Data
+
+These policies are provided for general consumption.
+Policy contents are written to be general purpose and org-specific values are relegated to conftest `--data` in the `data/` directory.
+You should pull the policies with `conftest pull` and specify your own data files as appropriate for your organization.
+
 # Policy Organization and Management
 
 See <the GitHub pages site once it is created.>
