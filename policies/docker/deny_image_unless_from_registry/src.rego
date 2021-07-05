@@ -9,8 +9,11 @@ package docker_pull_from_registry
 
 import data.approved_private_registries
 import data.docker_utils
+import data.util_functions
 
 policyID := "CTNRSEC-0001"
+
+cmds := ["env", "arg"]
 
 violation[{"policyId": policyID, "msg": msg}] {
 	input[i].Cmd == "from"
@@ -19,10 +22,7 @@ violation[{"policyId": policyID, "msg": msg}] {
 	not docker_utils.is_a_multistage_build(input, val[0])
 	not docker_utils.from_scratch(val[0])
 
-	# Count decreases if any of the approved registries appears in the string.
-	# So any value less than the length of the approved registries means that an approved registry is being used
-	# So we want a violation if the length equals the array. Can't be possible to be larger but hey, may as well include >=
-	count({y | y := approved_private_registries[_]; not startswith(val[0], y)}) >= count(approved_private_registries)
+	not util_functions.item_contained_in_list(val[0], approved_private_registries)
 	msg := sprintf("Dockerfiles must pull images from an approved private registry (`FROM my.private.registry/...`). The image `%s` does not pull from an approved private registry. The following are approved registries: `%v`.", [val, approved_private_registries])
 }
 
@@ -39,20 +39,17 @@ violation[{"policyId": policyID, "msg": msg}] {
 	# Drop the version, if present, to make it easier to find the right variable
 	variableName := split(variableNameWithVersion, ":")[0]
 
-	input[j].Cmd == "arg"
+	input[j].Cmd == cmds[_]
 	argCmd := input[j].Value[0]
 
-	# ARG is a match for the variable we're looking for
+	# ARG or ENV is a match for the variable we're looking for
 	startswith(argCmd, variableName)
 
-	# Grab the value of the ARGument
+	# Grab the value of the ARGument or ENV var
 	# e.g. ARG MYIMAGE=ubuntu:latest => ubuntu:latest
 	argNameAndValue := split(argCmd, "=")
 	imageInArg := trim(argNameAndValue[1], "\"")
 
-	# Count decreases if any of the approved registries appears in the string.
-	# So any value less than the length of the approved registries means that an approved registry is being used
-	# So we want a violation if the length equals the array. Can't be possible to be larger but hey, may as well include >=
-	count({y | y := approved_private_registries[_]; not startswith(imageInArg, y)}) >= count(approved_private_registries)
+	not util_functions.item_contained_in_list(imageInArg, approved_private_registries)
 	msg := sprintf("Dockerfiles must pull images from an approved private registry (`FROM my.private.registry/...`). The image `%s` in variable `%s` does not pull from an approved private registry. The following are approved registries: `%v`.", [imageInArg, argNameAndValue[0], approved_private_registries])
 }
