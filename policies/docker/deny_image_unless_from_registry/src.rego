@@ -22,7 +22,7 @@ violation[{"policyId": policyID, "msg": msg}] {
 	not docker_utils.is_a_multistage_build(input, val[0])
 	not docker_utils.from_scratch(val[0])
 
-	not util_functions.item_contained_in_list(val[0], approved_private_registries)
+	not util_functions.item_startswith_in_list(val[0], approved_private_registries)
 	msg := sprintf("Dockerfiles must pull images from an approved private registry (`FROM my.private.registry/...`). The image `%s` does not pull from an approved private registry. The following are approved registries: `%v`.", [val, approved_private_registries])
 }
 
@@ -50,6 +50,6 @@ violation[{"policyId": policyID, "msg": msg}] {
 	argNameAndValue := split(argCmd, "=")
 	imageInArg := trim(argNameAndValue[1], "\"")
 
-	not util_functions.item_contained_in_list(imageInArg, approved_private_registries)
+	not util_functions.item_startswith_in_list(imageInArg, approved_private_registries)
 	msg := sprintf("Dockerfiles must pull images from an approved private registry (`FROM my.private.registry/...`). The image `%s` in variable `%s` does not pull from an approved private registry. The following are approved registries: `%v`.", [imageInArg, argNameAndValue[0], approved_private_registries])
 }
