@@ -69,7 +69,7 @@ violation[{"policyId": policyID, "msg": msg}] {
   not docker_utils.is_a_multistage_build(input, val[0])
   not docker_utils.from_scratch(val[0])
 
-  not util_functions.item_contained_in_list(val[0], approved_private_registries)
+  not util_functions.item_startswith_in_list(val[0], approved_private_registries)
   msg := sprintf("Dockerfiles must pull images from an approved private registry (`FROM my.private.registry/...`). The image `%s` does not pull from an approved private registry. The following are approved registries: `%v`.", [val, approved_private_registries])
 }
 
@@ -96,7 +96,7 @@ violation[{"policyId": policyID, "msg": msg}] {
   argNameAndValue := split(argCmd, "=")
   imageInArg := trim(argNameAndValue[1], "\"")
 
-  not util_functions.item_contained_in_list(imageInArg, approved_private_registries)
+  not util_functions.item_startswith_in_list(imageInArg, approved_private_registries)
   msg := sprintf("Dockerfiles must pull images from an approved private registry (`FROM my.private.registry/...`). The image `%s` in variable `%s` does not pull from an approved private registry. The following are approved registries: `%v`.", [imageInArg, argNameAndValue[0], approved_private_registries])
 }
 ```
@@ -212,7 +212,6 @@ violation[{"policyId": policyID, "msg": msg}] {
   package_name := input.name
   not has_org_scope(package_name)
   msg := sprintf("NodeJS packages must be wrapped beneath an organization scope (e.g. `@orgscope/mypackage`). `%s` does not use any organization scope. Approved scopes are: `%v`.", [package_name, approved_org_scopes])
-  trace(sprintf("%v", [{"policyId": policyID, "msg": msg}]))
 }
 
 violation[{"policyId": policyID, "msg": msg}] {
@@ -220,9 +219,8 @@ violation[{"policyId": policyID, "msg": msg}] {
   package_name := input.name
   has_org_scope(package_name)
   org_name := substring(package_name, 1, -1)
-  not util_functions.item_contained_in_list(org_name, approved_org_scopes)
+  not util_functions.item_startswith_in_list(org_name, approved_org_scopes)
   msg := sprintf("NodeJS packages must be wrapped beneath an organization scope (e.g. `@orgscope/mypackage`). `%s` does not use an approved organization scope. Approved scopes are: `%v`.", [package_name, approved_org_scopes])
-  trace(sprintf("%v", [{"policyId": policyID, "msg": msg}]))
 }
 ```
 

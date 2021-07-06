@@ -39,7 +39,6 @@ violation[{"policyId": policyID, "msg": msg}] {
 	package_name := input.name
 	not has_org_scope(package_name)
 	msg := sprintf("NodeJS packages must be wrapped beneath an organization scope (e.g. `@orgscope/mypackage`). `%s` does not use any organization scope. Approved scopes are: `%v`.", [package_name, approved_org_scopes])
-	trace(sprintf("%v", [{"policyId": policyID, "msg": msg}]))
 }
 
 violation[{"policyId": policyID, "msg": msg}] {
@@ -47,7 +46,6 @@ violation[{"policyId": policyID, "msg": msg}] {
 	package_name := input.name
 	has_org_scope(package_name)
 	org_name := substring(package_name, 1, -1)
-	not util_functions.item_contained_in_list(org_name, approved_org_scopes)
+	not util_functions.item_startswith_in_list(org_name, approved_org_scopes)
 	msg := sprintf("NodeJS packages must be wrapped beneath an organization scope (e.g. `@orgscope/mypackage`). `%s` does not use an approved organization scope. Approved scopes are: `%v`.", [package_name, approved_org_scopes])
-	trace(sprintf("%v", [{"policyId": policyID, "msg": msg}]))
 }
