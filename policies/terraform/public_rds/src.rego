@@ -4,7 +4,7 @@
 # The `publicly_accessible` attribute, if defined, must be set to `false`.
 # The attribute is `false` by default if not specified.
 #
-# # See <https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/db_instance#publicly_accessible>.
+# See <https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/db_instance#publicly_accessible>.
 #
 package terraform_no_public_rds
 
