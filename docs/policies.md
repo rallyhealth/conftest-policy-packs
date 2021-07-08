@@ -9,6 +9,10 @@
 * [CTNRSEC-0002: Dockerfiles should not use environment variables for sensitive values](#ctnrsec-0002-dockerfiles-should-not-use-environment-variables-for-sensitive-values)
 * [PKGSEC-0001: NodeJS packages must be published under an organization scope](#pkgsec-0001-nodejs-packages-must-be-published-under-an-organization-scope)
 
+## Warnings
+
+* [PKGSEC-0002: NodeJS Projects Must Use An Approved Version](#pkgsec-0002-nodejs-projects-must-use-an-approved-version)
+
 ## AWSSEC-0001: Encrypt S3 Buckets
 
 **Severity:** Violation
@@ -68,6 +72,7 @@ Systems making direct `curl` requests to instance metadata must modify their req
  TOKEN=`curl -X PUT "http://196.254.196.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 60"`
  # Make instance metadata request
  curl http://169.254.169.254/latest/meta-data/profile -H "X-aws-ec2-metadata-token: $TOKEN"
+```
 
 ### Rego
 
@@ -130,7 +135,7 @@ RDS instances must block public access.
 The `publicly_accessible` attribute, if defined, must be set to `false`.
 The attribute is `false` by default if not specified.
 
-# See <https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/db_instance#publicly_accessible>.
+See <https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/db_instance#publicly_accessible>.
 
 ### Rego
 
@@ -342,3 +347,88 @@ violation[{"policyId": policyID, "msg": msg}] {
 ```
 
 _source: [https://github.com/RallyHealth/conftest-policy-packs/policies/packages/nodejs_package_must_use_org_scope/src.rego](https://github.com/RallyHealth/conftest-policy-packs/policies/packages/nodejs_package_must_use_org_scope/src.rego)_
+
+## PKGSEC-0002: NodeJS Projects Must Use An Approved Version
+
+**Severity:** Warning
+
+**Resources:** Any Resource
+
+NodeJS projects must use a recent NodeJS release.
+Only 1 LTS version is active at one time, however we allow 1 previous LTS version to be used to
+accomodate upgrade migration periods.
+
+You may use a non-LTS "current" NodeJS release as long as that version is more current than the most recently
+deprecated LTS release.
+For example, if the LTS version is 16 (meaning version 14 was the most recently deprecated LTS version),
+you may use NodeJS 14, 15, 16, or 17.
+Once NodeJS 18 is released as an LTS version, you may use versions 16, 17, 18, or 19.
+
+See <https://nodejs.org/en/about/releases/> for more information about Node's release schedule.
+
+See <https://docs.npmjs.com/cli/v7/configuring-npm/package-json#engines> for more information about the `engines`
+field in `package.json` files.
+
+### Rego
+
+```rego
+package nodejs_must_use_approved_version
+
+import data.packages_functions
+import data.util_functions
+
+policyID := "PKGSEC-0002"
+
+latest_lts_version := 16
+
+has_node_engine(resource) {
+  util_functions.has_key(resource, "engines")
+  util_functions.has_key(resource.engines, "node")
+}
+
+is_unapproved_node_version(engine_string) {
+  # List any possible symbols or other characters we don't care about that are valid in the engine string
+  engine_string_no_symbols := strings.replace_n({
+    "<": "",
+    ">": "",
+    "=": "",
+    "~": "",
+  }, engine_string)
+
+  possible_multiple_versions := split(engine_string_no_symbols, " ")
+  numbers_outside_acceptable_range(possible_multiple_versions)
+}
+
+numbers_outside_acceptable_range(number_string_list) {
+  some i
+  version := to_number(number_string_list[i])
+  version < latest_lts_version - 2
+}
+
+missing_minimum_version_constraint(engine_string) {
+  index_of_minimum_constraint := indexof(engine_string, ">")
+  index_of_minimum_constraint == -1
+}
+
+warn[msg] {
+  packages_functions.is_package_json(input)
+  not has_node_engine(input)
+  msg := sprintf("%s: NodeJS projects must enforce a Node engine version within the last 2 LTS releases. This project does not enforce any Node engine version. See the [NodeJS documentation](https://docs.npmjs.com/cli/v7/configuring-npm/package-json#engines) on how to require a Node version. You must use a version of Node >= %d.", [policyID, latest_lts_version - 2])
+}
+
+warn[msg] {
+  packages_functions.is_package_json(input)
+  has_node_engine(input)
+  is_unapproved_node_version(input.engines.node)
+  msg := sprintf("%s: NodeJS projects must enforce a Node engine version within the last 2 LTS releases. This project uses an older NodeJS version in its engine constraint: [`%s`]. You must use a version of Node >= %d.", [policyID, input.engines.node, latest_lts_version - 2])
+}
+
+warn[msg] {
+  packages_functions.is_package_json(input)
+  has_node_engine(input)
+  missing_minimum_version_constraint(input.engines.node)
+  msg := sprintf("%s: NodeJS projects must enforce a Node engine version within the last 2 LTS releases. This project does not enforce a minimum Node engine version. You must use a version of Node >= %d.", [policyID, latest_lts_version - 2])
+}
+```
+
+_source: [https://github.com/RallyHealth/conftest-policy-packs/policies/packages/nodejs_must_use_recent_version/src.rego](https://github.com/RallyHealth/conftest-policy-packs/policies/packages/nodejs_must_use_recent_version/src.rego)_
