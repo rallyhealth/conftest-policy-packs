@@ -20,6 +20,7 @@
 # TOKEN=`curl -X PUT "http://196.254.196.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 60"`
 # # Make instance metadata request
 # curl http://169.254.169.254/latest/meta-data/profile -H "X-aws-ec2-metadata-token: $TOKEN"
+# ```
 package terraform_ec2_imdsv2_required
 
 import data.util_functions
