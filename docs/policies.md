@@ -4,6 +4,7 @@
 
 * [AWSSEC-0001: Encrypt S3 Buckets](#awssec-0001-encrypt-s3-buckets)
 * [AWSSEC-0002: EC2 Instances Must Use Instance Metadata Service Version 2](#awssec-0002-ec2-instances-must-use-instance-metadata-service-version-2)
+* [AWSSEC-0003: RDS Instances May Not Be Public](#awssec-0003-rds-instances-may-not-be-public)
 * [CTNRSEC-0001: Dockerfiles must pull from an approved private registry](#ctnrsec-0001-dockerfiles-must-pull-from-an-approved-private-registry)
 * [CTNRSEC-0002: Dockerfiles should not use environment variables for sensitive values](#ctnrsec-0002-dockerfiles-should-not-use-environment-variables-for-sensitive-values)
 * [PKGSEC-0001: NodeJS packages must be published under an organization scope](#pkgsec-0001-nodejs-packages-must-be-published-under-an-organization-scope)
@@ -118,6 +119,43 @@ violation[{"policyId": policyID, "msg": msg}] {
 ```
 
 _source: [https://github.com/RallyHealth/conftest-policy-packs/policies/terraform/imdsv2_required/src.rego](https://github.com/RallyHealth/conftest-policy-packs/policies/terraform/imdsv2_required/src.rego)_
+
+## AWSSEC-0003: RDS Instances May Not Be Public
+
+**Severity:** Violation
+
+**Resources:** Any Resource
+
+RDS instances must block public access.
+The `publicly_accessible` attribute, if defined, must be set to `false`.
+The attribute is `false` by default if not specified.
+
+# See <https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/db_instance#publicly_accessible>.
+
+### Rego
+
+```rego
+package terraform_no_public_rds
+
+import data.util_functions
+
+policyID := "AWSSEC-0003"
+
+has_public_attribute(resource) {
+  util_functions.has_key(resource, "publicly_accessible")
+}
+
+violation[{"policyId": policyID, "msg": msg}] {
+  resource := input.resource.aws_db_instance
+  a_resource := resource[name]
+  has_public_attribute(a_resource)
+  a_resource.publicly_accessible != false
+
+  msg := sprintf("RDS instances must not be publicly exposed. Set `publicly_accessible` to `false` on aws_db_instance.`%s`", [name])
+}
+```
+
+_source: [https://github.com/RallyHealth/conftest-policy-packs/policies/terraform/public_rds/src.rego](https://github.com/RallyHealth/conftest-policy-packs/policies/terraform/public_rds/src.rego)_
 
 ## CTNRSEC-0001: Dockerfiles must pull from an approved private registry
 
