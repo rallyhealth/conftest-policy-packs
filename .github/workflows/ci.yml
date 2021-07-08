@@ -38,6 +38,9 @@ jobs:
         with:
           go-version: '^1.16'
 
+      # If the version of konstraint updates during the lifetime of an open PR, the
+      # caching benefits will disappear.
+      # In the general case, this cuts ~3 minutes from this job.
       - name: 'Cache Go'
         uses: actions/cache@v2
         with:
