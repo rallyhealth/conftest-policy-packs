@@ -18,31 +18,24 @@
 package nodejs_package_must_have_org_scope
 
 import data.approved_org_scopes
+import data.packages_functions
 import data.util_functions
 
 policyID := "PKGSEC-0001"
-
-# package.json is required to have 'name' and 'version' fields.
-# All other fields are not required so we cannot rely on them existing.
-# This means we will not evaluate any incorrectly written package.json files missing these fields.
-is_package_json(resource) {
-	util_functions.has_key(resource, "name")
-	util_functions.has_key(resource, "version")
-}
 
 has_org_scope(name) {
 	startswith(name, "@")
 }
 
 violation[{"policyId": policyID, "msg": msg}] {
-	is_package_json(input)
+	packages_functions.is_package_json(input)
 	package_name := input.name
 	not has_org_scope(package_name)
 	msg := sprintf("NodeJS packages must be wrapped beneath an organization scope (e.g. `@orgscope/mypackage`). `%s` does not use any organization scope. Approved scopes are: `%v`.", [package_name, approved_org_scopes])
 }
 
 violation[{"policyId": policyID, "msg": msg}] {
-	is_package_json(input)
+	packages_functions.is_package_json(input)
 	package_name := input.name
 	has_org_scope(package_name)
 	org_name := substring(package_name, 1, -1)
