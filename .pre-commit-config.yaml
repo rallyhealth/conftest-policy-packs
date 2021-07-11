@@ -11,4 +11,4 @@ repos:
         name: Generate Documentation
         entry: scripts/build-policies.sh
         language: script
-        files: policies/
+        files: policies|\.md

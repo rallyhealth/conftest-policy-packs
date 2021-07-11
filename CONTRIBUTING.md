@@ -92,7 +92,7 @@ Closes #123, #124, #125
 All breaking changes have to be mentioned in the footer with the description of the change, justification, and
 migration notes.
 
-Artifical example:
+Artificial example:
 
 ```
 BREAKING CHANGE:
@@ -108,7 +108,7 @@ You should create a directory with some short name identifying the policy being 
 Inside that directory, you should write the policy in a `src.rego` file and add tests in a `src_test.rego` file.
 
 All policies **must** be accompanied by matching tests in `src_test.rego`.
-For more information on addding tests, see [Testing Policies](#testing-policies).
+For more information on adding tests, see [Testing Policies](#testing-policies).
 
 ## Writing Policies
 
@@ -127,7 +127,7 @@ Exceptions may be used to exempt special cases from a policy.
 
 Conftest differs slightly from generic OPA in that each Rego policy **must** begin with `deny`, `violation`, or `warn`.
 `deny` and `msg` take a `msg` parameter. `violation` may take an arbitrary object.
-We require the use of `violation` or `warn` in order to generate documentation from policies with [konstraint](https://github.com/plexsystems/konstraint).
+We require the use of `violation` or `warn` to generate documentation from policies with [konstraint](https://github.com/plexsystems/konstraint).
 
 `violation` policies must use the parameters `policyId` and `msg`, e.g. `violation[{ "policyId": policyID, "msg": msg }]`.
 
@@ -141,7 +141,7 @@ In this case, the `msg` must begin with the policy ID, e.g. `msg := sprintf("%s:
 All policies should have a unique `package` name describing their purpose, e.g. `package docker_pull_from_registry`.
 
 All policy packages must have a `policyID` variable.
-This variable is interpolated into the policy message given to developers, but is also used by Konstraint to attach
+This variable is interpolated into the policy message given to developers but is also used by Konstraint to attach
 the ID to the policy title in the auto-generated documentation.
 See the [Policy ID](#policy-id) section below for guidance on selecting or creating a `policyID`.
 
@@ -182,7 +182,7 @@ Each test case must begin with `test_`, e.g. `test_pull_registry{...}`.
 
 A good way of generating mock input for test cases is to create a file, such as a Dockerfile, with the content you
 expect to create a policy against, such as a `FROM notApprovedRegistry/ubuntu:latest` line.
-Then run `conftest parse <file>` to convert the file into the JSON respresentation a policy will receive as `input`.
+Then run `conftest parse <file>` to convert the file into the JSON representation a policy will receive as `input`.
 You can use this JSON as the input for the test cases.
 
 # Troubleshooting Policies
