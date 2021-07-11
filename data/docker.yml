@@ -1,7 +1,13 @@
+# CTNRSEC-0001
+# One or more approved registries from which container images may be downloaded.
 approved_private_registries:
   - 'my.private.registry'
   - 'other.private.registry'
 
+# CTNRSEC-0002
+# Deny any ARG or ENV key that appears to have a sensitive name, except for these known exclusions.
+# Amplitude, for example, was common at Rally for a period of time and Amplitude's API key is
+# meant to be bundled into the frontend, so it can be excluded from the policy.
 excepted_env_keys:
   # amplitude's api key is bundled into the frontend and is not considered a secret
   - amplitude
