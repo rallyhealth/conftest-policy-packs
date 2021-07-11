@@ -37,7 +37,7 @@ get_latest_lts_version = latest_lts_release {
 	releases := filter_lts_releases(output)
 	num_releases := count(releases)
 
-	# This may be an LTS in the future, not the currently released "latest" LTS versino
+	# This may be an LTS in the future, not the currently released "latest" LTS version
 	# This would be an even-numbered current release with a start date in the future, when it becomes the LTS release
 	latest_lts := releases[minus(num_releases, 1)]
 
@@ -47,8 +47,6 @@ get_latest_lts_version = latest_lts_release {
 	# Output is [year(s), month(s), day(s), hour(s), minute(s), second(s)]
 	time_diff := determine_time_difference_between_today_and_latest_lts(release_metadata)
 
-	# If time diff is positive, then LTS release comes out in the future.
-	# If any value in the time diff is negative, then the LTS release came out before this moment
 	# This will either return the latest LTS release or the second-latest, depending on that time difference outcome
 	latest_lts_release := determine_current_lts_release(releases, time_diff)
 }
@@ -76,6 +74,8 @@ determine_time_difference_between_today_and_latest_lts(release_metadata) = time_
 }
 
 determine_current_lts_release(sorted_releases, time_diff) = sorted_releases[minus(count(sorted_releases), 1)] {
+	# If time diff is positive, then LTS release comes out in the future.
+	# If any value in the time diff is negative, then the LTS release came out before this moment
 	not date_in_future(time_diff)
 } else = sorted_releases[minus(count(sorted_releases), 2)] {
 	true

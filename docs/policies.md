@@ -5,9 +5,9 @@
 * [AWSSEC-0001: Encrypt S3 Buckets](#awssec-0001-encrypt-s3-buckets)
 * [AWSSEC-0002: EC2 Instances Must Use Instance Metadata Service Version 2](#awssec-0002-ec2-instances-must-use-instance-metadata-service-version-2)
 * [AWSSEC-0003: RDS Instances May Not Be Public](#awssec-0003-rds-instances-may-not-be-public)
-* [CTNRSEC-0001: Dockerfiles must pull from an approved private registry](#ctnrsec-0001-dockerfiles-must-pull-from-an-approved-private-registry)
-* [CTNRSEC-0002: Dockerfiles should not use environment variables for sensitive values](#ctnrsec-0002-dockerfiles-should-not-use-environment-variables-for-sensitive-values)
-* [PKGSEC-0001: NodeJS packages must be published under an organization scope](#pkgsec-0001-nodejs-packages-must-be-published-under-an-organization-scope)
+* [CTNRSEC-0001: Dockerfiles Must Pull From An Approved Private Registry](#ctnrsec-0001-dockerfiles-must-pull-from-an-approved-private-registry)
+* [CTNRSEC-0002: Dockerfiles Should Not Use Environment Variables For Sensitive Values](#ctnrsec-0002-dockerfiles-should-not-use-environment-variables-for-sensitive-values)
+* [PKGSEC-0001: NodeJS Packages Must Be Published Under An Organization Scope](#pkgsec-0001-nodejs-packages-must-be-published-under-an-organization-scope)
 * [PKGSEC-0002: NodeJS Projects Must Use A Recent NodeJS Version](#pkgsec-0002-nodejs-projects-must-use-a-recent-nodejs-version)
 
 ## AWSSEC-0001: Encrypt S3 Buckets
@@ -159,7 +159,7 @@ violation[{"policyId": policyID, "msg": msg}] {
 
 _source: [https://github.com/RallyHealth/conftest-policy-packs/policies/terraform/no_public_rds/src.rego](https://github.com/RallyHealth/conftest-policy-packs/policies/terraform/no_public_rds/src.rego)_
 
-## CTNRSEC-0001: Dockerfiles must pull from an approved private registry
+## CTNRSEC-0001: Dockerfiles Must Pull From An Approved Private Registry
 
 **Severity:** Violation
 
@@ -189,7 +189,7 @@ violation[{"policyId": policyID, "msg": msg}] {
   not docker_utils.from_scratch(val[0])
 
   not util_functions.item_startswith_in_list(val[0], approved_private_registries)
-  msg := sprintf("Dockerfiles must pull images from an approved private registry (`FROM my.private.registry/...`). The image `%s` does not pull from an approved private registry. The following are approved registries: `%v`.", [val, approved_private_registries])
+  msg := sprintf("Dockerfiles must pull images from an approved private registry (`FROM my.private.registry/...`). The image `%s` does not pull from an approved private registry. The following are approved registries: `%v`.", [val[0], approved_private_registries])
 }
 
 violation[{"policyId": policyID, "msg": msg}] {
@@ -222,7 +222,7 @@ violation[{"policyId": policyID, "msg": msg}] {
 
 _source: [https://github.com/RallyHealth/conftest-policy-packs/policies/docker/deny_image_unless_from_registry/src.rego](https://github.com/RallyHealth/conftest-policy-packs/policies/docker/deny_image_unless_from_registry/src.rego)_
 
-## CTNRSEC-0002: Dockerfiles should not use environment variables for sensitive values
+## CTNRSEC-0002: Dockerfiles Should Not Use Environment Variables For Sensitive Values
 
 **Severity:** Violation
 
@@ -288,7 +288,7 @@ violation[{"policyId": policyID, "msg": msg}] {
 
 _source: [https://github.com/RallyHealth/conftest-policy-packs/policies/docker/sensitive_keys_in_env_args/src.rego](https://github.com/RallyHealth/conftest-policy-packs/policies/docker/sensitive_keys_in_env_args/src.rego)_
 
-## PKGSEC-0001: NodeJS packages must be published under an organization scope
+## PKGSEC-0001: NodeJS Packages Must Be Published Under An Organization Scope
 
 **Severity:** Violation
 
@@ -388,7 +388,7 @@ get_latest_lts_version = latest_lts_release {
   releases := filter_lts_releases(output)
   num_releases := count(releases)
 
-  # This may be an LTS in the future, not the currently released "latest" LTS versino
+  # This may be an LTS in the future, not the currently released "latest" LTS version
   # This would be an even-numbered current release with a start date in the future, when it becomes the LTS release
   latest_lts := releases[minus(num_releases, 1)]
 
@@ -398,8 +398,6 @@ get_latest_lts_version = latest_lts_release {
   # Output is [year(s), month(s), day(s), hour(s), minute(s), second(s)]
   time_diff := determine_time_difference_between_today_and_latest_lts(release_metadata)
 
-  # If time diff is positive, then LTS release comes out in the future.
-  # If any value in the time diff is negative, then the LTS release came out before this moment
   # This will either return the latest LTS release or the second-latest, depending on that time difference outcome
   latest_lts_release := determine_current_lts_release(releases, time_diff)
 }
@@ -427,6 +425,8 @@ determine_time_difference_between_today_and_latest_lts(release_metadata) = time_
 }
 
 determine_current_lts_release(sorted_releases, time_diff) = sorted_releases[minus(count(sorted_releases), 1)] {
+  # If time diff is positive, then LTS release comes out in the future.
+  # If any value in the time diff is negative, then the LTS release came out before this moment
   not date_in_future(time_diff)
 } else = sorted_releases[minus(count(sorted_releases), 2)] {
   true

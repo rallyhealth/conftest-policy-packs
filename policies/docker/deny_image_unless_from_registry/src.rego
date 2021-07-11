@@ -1,4 +1,4 @@
-# @title Dockerfiles must pull from an approved private registry
+# @title Dockerfiles Must Pull From An Approved Private Registry
 #
 # Dockerfiles must pull images from an approved private registry and not from public repositories.
 # The FROM statement must have a private registry prepended, e.g. "our.private.registry/..." as the value.
@@ -23,7 +23,7 @@ violation[{"policyId": policyID, "msg": msg}] {
 	not docker_utils.from_scratch(val[0])
 
 	not util_functions.item_startswith_in_list(val[0], approved_private_registries)
-	msg := sprintf("Dockerfiles must pull images from an approved private registry (`FROM my.private.registry/...`). The image `%s` does not pull from an approved private registry. The following are approved registries: `%v`.", [val, approved_private_registries])
+	msg := sprintf("Dockerfiles must pull images from an approved private registry (`FROM my.private.registry/...`). The image `%s` does not pull from an approved private registry. The following are approved registries: `%v`.", [val[0], approved_private_registries])
 }
 
 # FROM check where a variable is used for the image
