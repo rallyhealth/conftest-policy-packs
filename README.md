@@ -74,7 +74,7 @@ Rally currently handles exceptions in its homegrown GitHub App code wrapping Con
 Violations produced by Conftest are filtered out from a JSON mapping of approved exceptions to repos.
 Exceptions are supported at a per-file level.
 
-This repo does not include an exceptions framework due to that custom handling.
+See [here](/exceptions/readme.md) for more information.
 
 # Contributing
 

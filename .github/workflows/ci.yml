@@ -58,3 +58,12 @@ jobs:
 
       - name: 'Pre-Commit Checks'
         uses: pre-commit/action@v2.0.3
+
+      - name: "Ensure data files are correct file type"
+        run: |
+          # This will exit 1 if any files are found with a different file extension
+          if [[ $(find ./data -maxdepth 1 -type f -not -name "*.yml") != "" ]];
+          then
+              echo "::error::Some files in data/ do not have .yml extensions"
+              exit 1
+          fi
