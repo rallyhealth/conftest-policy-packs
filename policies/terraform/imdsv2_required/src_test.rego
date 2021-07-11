@@ -34,7 +34,7 @@ test_no_metadata_v2 {
 test_not_aws_instance {
 	count(violation) == 0 with input as {"resource": {"aws_s3_bucket": {"encrypted-bucket": {
 		"acl": "private",
-		"bucket": "rally-coaching-prod",
+		"bucket": "my-test-bucket",
 		"server_side_encryption_configuration": {"rule": {"apply_server_side_encryption_by_default": {"sse_algorithm": "AES256"}}},
 	}}}}
 }

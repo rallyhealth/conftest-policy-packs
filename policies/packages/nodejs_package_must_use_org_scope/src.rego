@@ -1,4 +1,4 @@
-# @title NodeJS packages must be published under an organization scope
+# @title NodeJS Packages Must Be Published Under An Organization Scope
 #
 # NodeJS packages are subject to typosquatting, in which a malicious package is published
 # with a slight misspelling. The aim is to infect end users who misspell your package.

@@ -1,4 +1,4 @@
-# @title Dockerfiles should not use environment variables for sensitive values
+# @title Dockerfiles Should Not Use Environment Variables For Sensitive Values
 #
 # Docker images should not pass sensitive values through `ENV` or `ARG` variables.
 # This binds the secret value into a layer of the Docker image and makes the secret
