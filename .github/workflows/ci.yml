@@ -47,15 +47,14 @@ jobs:
           path: |
             ~/Library/Caches/go-build
             ~/go/
-          key: ${{ runner.os }}-go-${{ github.head_ref }}
+          key: ${{ runner.os }}-go-${{ hashFiles('scripts/ci-go-deps.sh') }}
           restore-keys: |
             ${{ runner.os }}-go-
 
       - name: 'Install Dependencies'
         run: |
           brew install conftest
-          go install github.com/plexsystems/konstraint@latest
-          go install sigs.k8s.io/mdtoc@latest
+          ./scripts/ci-go-deps.sh
 
       - name: 'Pre-Commit Checks'
         uses: pre-commit/action@v2.0.3
