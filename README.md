@@ -128,3 +128,4 @@ Rally's compliance-as-code program has seen early success internally thanks to t
 - Mia Kralowetz
 - Nicholas Hung
 - Karl Nilsen
+- Benjamin Mangold
