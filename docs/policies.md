@@ -377,13 +377,18 @@ policyID := "PKGSEC-0002"
 
 nodejs_release_schedule_json := "https://raw.githubusercontent.com/nodejs/Release/main/schedule.json"
 
-get_latest_lts_version = latest_lts_release {
+get_nodejs_releases = output {
+  # This is a separate function (with no input params) to allow us to mock the call in the tests
   output := http.send({
     "url": nodejs_release_schedule_json,
     "method": "GET",
     "force_json_decode": true,
     "cache": true,
   })
+}
+
+get_latest_lts_version = latest_lts_release {
+  output := get_nodejs_releases
 
   releases := filter_lts_releases(output)
   num_releases := count(releases)
@@ -395,7 +400,8 @@ get_latest_lts_version = latest_lts_release {
   # e.g. { "codename": "", "end": "2025-04-30", "lts": "2022-10-25", "maintenance": "2023-10-18", "start": "2022-04-19" }
   release_metadata := output.body[sprintf("v%d", [latest_lts])]
 
-  # Output is [year(s), month(s), day(s), hour(s), minute(s), second(s)]
+  # Output is a float representing the difference in nanoseconds between the two dates
+  # All we care about is whether it is positive or negative
   time_diff := determine_time_difference_between_today_and_latest_lts(release_metadata)
 
   # This will either return the latest LTS release or the second-latest, depending on that time difference outcome
@@ -419,28 +425,16 @@ determine_time_difference_between_today_and_latest_lts(release_metadata) = time_
   # Layout comes from requirements in Golang time.Parse
   # https://golang.org/pkg/time/#Parse
   release_time := time.parse_ns("2006-01-02", release_metadata.start)
-
-  # If release time is in the future, use the second-latest LTS, which would be the current LTS version
-  time_diff := time.diff(today, release_time)
+  time_diff := today - release_time
 }
 
 determine_current_lts_release(sorted_releases, time_diff) = sorted_releases[minus(count(sorted_releases), 1)] {
-  # If time diff is positive, then LTS release comes out in the future.
-  # If any value in the time diff is negative, then the LTS release came out before this moment
-  not date_in_future(time_diff)
+  # If release time is in the future, use the second-latest LTS, which would be the current LTS version
+  # If time diff is positive, then LTS release comes out in the future
+  # If time diff is negative, then the LTS release came out before this moment
+  time_diff >= 0
 } else = sorted_releases[minus(count(sorted_releases), 2)] {
   true
-}
-
-date_in_future(time_diff) {
-  # If any value in the time diff is negative, then the LTS release has been released earlier than the current moment
-  not some_number_is_negative(time_diff)
-}
-
-some_number_is_negative(nums) {
-  some i
-  num := nums[i]
-  num < 0
 }
 
 has_node_engine(resource) {
