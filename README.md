@@ -1,7 +1,7 @@
 # Conftest Policy Packs
 
 [![Conftest CI](https://github.com/rallyhealth/conftest-policy-packs/actions/workflows/ci.yml/badge.svg)](https://github.com/rallyhealth/conftest-policy-packs/actions/workflows/ci.yml)
-![Github All Contributors](https://img.shields.io/github/all-contributors/rallyhealth/conftest-policy-packs/main)
+![Github Contributors](https://img.shields.io/github/contributors/rallyhealth/conftest-policy-packs)
 ![GitHub last commit](https://img.shields.io/github/last-commit/rallyhealth/conftest-policy-packs)
 ![GitHub](https://img.shields.io/github/license/rallyhealth/conftest-policy-packs)
 
