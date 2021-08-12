@@ -9,6 +9,9 @@ Centralized OPA policy workflow for Conftest-based Compliance-as-Code evaluation
 
 This is a central repository housing a snapshot of Rally Health's Rego policies for its Compliance-as-Code program.
 
+View this project at it's [GitHub Page](https://rallyhealth.github.io/conftest-policy-packs/).
+The policy documentation is available [here](https://rallyhealth.github.io/conftest-policy-packs/docs/policies.html).
+
 Rally enforces these policies through a homegrown GitHub App running on AWS ECS to evaluate every commit in the organization.
 The GitHub App is an internal wrapper around Conftest, primarily handling reporting the violation results back to developer workflows
 in GitHub pull requests and to a central dashboard in Datadog.
