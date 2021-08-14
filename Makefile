@@ -3,8 +3,7 @@
 .PHONY: install
 install:
 	brew install conftest golang jq pre-commit
-	go install github.com/plexsystems/konstraint@latest
-	go install sigs.k8s.io/mdtoc@latest
+	sh scripts/ci-go-deps.sh
 	pre-commit install
 
 .PHONY: update

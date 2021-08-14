@@ -1,12 +1,13 @@
 repos:
+  - repo: https://github.com/anderseknert/pre-commit-opa
+    rev: v1.5.0
+    hooks:
+      - id: conftest-fmt
+      - id: conftest-verify
+        args: ['--data', 'data/', '--policy', 'policies/']
+
   - repo: local
     hooks:
-      - id: conftest-format
-        name: Format Rego Policies
-        entry: scripts/lint.sh
-        language: script
-        files: policies/
-
       - id: gen-policies
         name: Generate Documentation
         entry: scripts/build-policies.sh
