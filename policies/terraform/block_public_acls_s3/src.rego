@@ -11,7 +11,7 @@
 #
 package terraform_block_public_acls_s3
 
-import data.lib.util_functions
+import data.util_functions
 
 policyID := "AWSSEC-0083"
 
