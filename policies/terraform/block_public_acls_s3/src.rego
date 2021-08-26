@@ -1,44 +1,43 @@
 # @title Block public access of S3 buckets
 #
-# Policy owner: DEVSECOPS
+# S3 Block Public Access ensures that objects in a bucket never have public access, now and in the future.
+# S3 Block Public Access settings override S3 permissions that allow public access.
+# If an object is written to an S3 bucket with S3 Block Public Access enabled, and that object specifies any type of public permissions via ACL or policy, those public permissions are blocked.
 #
-# There are security benefits of blocking public access to s3 buckets.
-# Those wishing to apply such a control may do so with this policy.
-# You may also be required to enforce this as a compliance checkbox.
+# Unintentionally exposed S3 Buckets are a frequent source of data breaches and restricting public access helps prevent unintended data exposure.
 #
-# An S3 Bucket can contain sensitive data. To protect the data against illicit access, public access must be blocked on S3 Buckets.
 # See <https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_public_access_block>.
 #
 package terraform_block_public_acls_s3
 
 import data.util_functions
 
-policyID := "AWSSEC-0083"
+policyID := "AWSSEC-0004"
 
 # Make sure each S3 Bucket defined has a Public Access block defined for it.
-violation[msg] {
+violation[{"policyId": policyID, "msg": msg}] {
 	input.resource.aws_s3_bucket[bucket_name]
 
 	check_is_bucket_missing_public_access_block(bucket_name)
-	msg := sprintf("%s: Public access is not explicitly disabled on the following S3 Bucket: `%s`. You must set an `[s3_bucket_public_access_block](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_public_access_block)`.", [policyID, bucket_name])
+	msg := sprintf("Public access is not explicitly disabled on the following S3 Bucket: `%s`. You must set an `[s3_bucket_public_access_block](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_public_access_block)`.", [bucket_name])
 }
 
 # Check to see if the public acl flag is not set.
-violation[msg] {
+violation[{"policyId": policyID, "msg": msg}] {
 	input.resource.aws_s3_bucket[bucket_name]
 	acl_details := get_public_access_block_for_bucket(bucket_name)
 
 	check_if_block_public_acls_is_missing(acl_details)
-	msg := sprintf("%s: Missing s3 block public access for the following resource(s): `%s`. Required flag: `%s`", [policyID, bucket_name, "block_public_acls"])
+	msg := sprintf("Missing s3 block public access for the following resource(s): `%s`. Required flag: `%s`", [bucket_name, "block_public_acls"])
 }
 
 # Checks to see if public acls are not blocked.
-violation[msg] {
+violation[{"policyId": policyID, "msg": msg}] {
 	input.resource.aws_s3_bucket[bucket_name]
 	acl_details := bucket_to_publicAccess(bucket_name)
 
 	check_public_acls_not_blocked(acl_details)
-	msg := sprintf("%s: Missing s3 block public access for the following resource(s): `%s`. Required flag: `%s`", [policyID, bucket_name, "block_public_acls"])
+	msg := sprintf("Missing s3 block public access for the following resource(s): `%s`. Required flag: `%s`", [bucket_name, "block_public_acls"])
 }
 
 bucket_to_publicAccess(bucket_name) = public_access_block {
