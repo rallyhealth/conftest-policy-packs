@@ -16,7 +16,7 @@ Rally enforces these policies through a homegrown GitHub App running on AWS ECS 
 The GitHub App is an internal wrapper around Conftest, primarily handling reporting the violation results back to developer workflows
 in GitHub pull requests and to a central dashboard in Datadog.
 Violations are reported as non-blocking status checks.
-Results are added to developer PRs within 10-60 seconds.
+Results are added to developer PRs within 4-10 seconds.
 This repository only houses the policies used in this process and demonstrates a CI/CD approach to creating and managing
 Rego policies.
 
