@@ -30,7 +30,7 @@ jobs:
           path: |
             ~/Library/Caches/go-build
             ~/go/
-          key: ${{ runner.os }}-go-${{ hashFiles('scripts/ci-go-deps.sh') }}
+          key: ${{ runner.os }}-go-${{ github.ref }}
           restore-keys: |
             ${{ runner.os }}-go-
 
