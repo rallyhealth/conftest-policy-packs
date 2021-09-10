@@ -5,7 +5,7 @@
 * [AWSSEC-0001: Encrypt S3 Buckets](#awssec-0001-encrypt-s3-buckets)
 * [AWSSEC-0002: EC2 Instances Must Use Instance Metadata Service Version 2](#awssec-0002-ec2-instances-must-use-instance-metadata-service-version-2)
 * [AWSSEC-0003: RDS Instances May Not Be Public](#awssec-0003-rds-instances-may-not-be-public)
-* [AWSSEC-0004: Block public access of S3 buckets](#awssec-0004-block-public-access-of-s3-buckets)
+* [AWSSEC-0004: Block Public Access of S3 Buckets](#awssec-0004-block-public-access-of-s3-buckets)
 * [CTNRSEC-0001: Dockerfiles Must Pull From An Approved Private Registry](#ctnrsec-0001-dockerfiles-must-pull-from-an-approved-private-registry)
 * [CTNRSEC-0002: Dockerfiles Should Not Use Environment Variables For Sensitive Values](#ctnrsec-0002-dockerfiles-should-not-use-environment-variables-for-sensitive-values)
 * [PKGSEC-0001: NodeJS Packages Must Be Published Under An Organization Scope](#pkgsec-0001-nodejs-packages-must-be-published-under-an-organization-scope)
@@ -160,7 +160,7 @@ violation[{"policyId": policyID, "msg": msg}] {
 
 _source: [https://github.com/RallyHealth/conftest-policy-packs/policies/terraform/no_public_rds/src.rego](https://github.com/RallyHealth/conftest-policy-packs/policies/terraform/no_public_rds/src.rego)_
 
-## AWSSEC-0004: Block public access of S3 buckets
+## AWSSEC-0004: Block Public Access of S3 Buckets
 
 **Severity:** Violation
 
@@ -168,7 +168,8 @@ _source: [https://github.com/RallyHealth/conftest-policy-packs/policies/terrafor
 
 S3 Block Public Access ensures that objects in a bucket never have public access, now and in the future.
 S3 Block Public Access settings override S3 permissions that allow public access.
-If an object is written to an S3 bucket with S3 Block Public Access enabled, and that object specifies any type of public permissions via ACL or policy, those public permissions are blocked.
+If an object is written to an S3 bucket with S3 Block Public Access enabled, and that object specifies any type of public permissions
+via ACL or policy, those public permissions are blocked.
 
 Unintentionally exposed S3 Buckets are a frequent source of data breaches and restricting public access helps prevent unintended data exposure.
 

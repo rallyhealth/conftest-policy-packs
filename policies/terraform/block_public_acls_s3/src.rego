@@ -1,8 +1,9 @@
-# @title Block public access of S3 buckets
+# @title Block Public Access of S3 Buckets
 #
 # S3 Block Public Access ensures that objects in a bucket never have public access, now and in the future.
 # S3 Block Public Access settings override S3 permissions that allow public access.
-# If an object is written to an S3 bucket with S3 Block Public Access enabled, and that object specifies any type of public permissions via ACL or policy, those public permissions are blocked.
+# If an object is written to an S3 bucket with S3 Block Public Access enabled, and that object specifies any type of public permissions
+# via ACL or policy, those public permissions are blocked.
 #
 # Unintentionally exposed S3 Buckets are a frequent source of data breaches and restricting public access helps prevent unintended data exposure.
 #

@@ -1,0 +1,18 @@
+---
+# from https://github.com/artifacthub/hub/blob/master/docs/metadata/artifacthub-pkg.yml
+version: 1.0.0
+name: nodejs-must-use-recent-version
+displayName: NodeJS Projects Must Use A Recent NodeJS Version
+createdAt: 2021-09-10T21:27:55.549418+00:00
+description: |
+  NodeJS projects must use a recent NodeJS release.
+
+  Only 1 LTS version is active at one time, however we allow 1 previous LTS version to be used to
+  accomodate upgrade migration periods.
+homeURL: https://rallyhealth.github.io/conftest-policy-packs/
+keywords:
+  - opa
+  - conftest
+  - nodejs
+provider:
+  name: Rally Health

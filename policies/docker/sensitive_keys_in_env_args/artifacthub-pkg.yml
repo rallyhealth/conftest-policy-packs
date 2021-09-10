@@ -1,0 +1,18 @@
+---
+# from https://github.com/artifacthub/hub/blob/master/docs/metadata/artifacthub-pkg.yml
+version: 1.0.0
+name: docker-sensitive-keys-in-env-args
+displayName: Dockerfiles Should Not Use Environment Variables For Sensitive Values
+createdAt: 2021-09-10T21:27:55.549418+00:00
+description: |
+  Docker images should not pass sensitive values through `ENV` or `ARG` variables.
+  
+  This binds the secret value into a layer of the Docker image and makes the secret
+  recoverable by anyone with access to the final built image through the `docker history` command.
+homeURL: https://rallyhealth.github.io/conftest-policy-packs/
+keywords:
+  - opa
+  - conftest
+  - docker
+provider:
+  name: Rally Health
