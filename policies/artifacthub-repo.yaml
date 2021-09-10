@@ -1,0 +1,7 @@
+---
+# from https://github.com/artifacthub/hub/blob/master/docs/metadata/artifacthub-repo.yml
+repositoryID: bd00adfa-5aee-4074-9cea-5c0735605d20
+owners: # (optional, used to claim repository ownership)
+  - name: artis3n
+    email: dev@artis3nal.com
+ignore: []
