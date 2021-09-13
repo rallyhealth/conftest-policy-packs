@@ -1,6 +1,6 @@
 ---
 # from https://github.com/artifacthub/hub/blob/master/docs/metadata/artifacthub-pkg.yml
-version: 1.0.0
+version: 1.0.1
 name: coding-lang-package-policies
 displayName: OPA Conftest Lang Package Policies
 createdAt: 2021-09-10T21:27:55.549418+00:00
