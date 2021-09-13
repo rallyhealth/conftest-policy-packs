@@ -12,10 +12,15 @@ readme: |
 
   - `PKGSEC-0001`: Packages Must Be Published Under An Organization Scope
   - `PKGSEC-0002`: NodeJS Projects Must Use A Recent NodeJS Version
+install: |
+  `conftest pull git::https://github.com/rallyhealth/conftest-policy-packs.git//policies`
+
+  And configure your org-specific `--data` as necessary from [data/](https://github.com/rallyhealth/conftest-policy-packs/tree/main/data),
 homeURL: https://rallyhealth.github.io/conftest-policy-packs/
 keywords:
   - opa
   - conftest
   - nodejs
+license: MIT
 provider:
   name: Rally Health

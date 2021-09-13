@@ -12,10 +12,15 @@ readme: |
 
   - `CTNRSEC-0001`: Dockerfiles Must Pull From An Approved Private Registry
   - `CTNRSEC-0002`: Dockerfiles Should Not Use Environment Variables For Sensitive Values
+install: |
+  `conftest pull git::https://github.com/rallyhealth/conftest-policy-packs.git//policies`
+
+  And configure your org-specific `--data` as necessary from [data/](https://github.com/rallyhealth/conftest-policy-packs/tree/main/data),
 homeURL: https://rallyhealth.github.io/conftest-policy-packs/
 keywords:
   - opa
   - conftest
   - docker
+license: MIT
 provider:
   name: Rally Health

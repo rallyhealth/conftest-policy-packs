@@ -16,10 +16,15 @@ readme: |
   - `AWSSEC-0002`: EC2 Instances Must Use Instance Metadata Service Version 2
   - `AWSSEC-0003`: RDS Instances May Not Be Public
   - `AWSSEC-0004`: Block Public Access of S3 Buckets
+install: |
+  `conftest pull git::https://github.com/rallyhealth/conftest-policy-packs.git//policies`
+
+  And configure your org-specific `--data` as necessary from [data/](https://github.com/rallyhealth/conftest-policy-packs/tree/main/data),
 homeURL: https://rallyhealth.github.io/conftest-policy-packs/
 keywords:
   - opa
   - conftest
   - terraform
+license: MIT
 provider:
   name: Rally Health
