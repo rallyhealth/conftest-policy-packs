@@ -1,0 +1,23 @@
+---
+# from https://github.com/artifacthub/hub/blob/master/docs/metadata/artifacthub-pkg.yml
+version: 1.0.0
+name: terraform-policies
+displayName: OPA Conftest Terraform Policies
+createdAt: 2021-09-10T21:27:55.549418+00:00
+description: |
+  These policies enforce security standards against Dockerfiles.
+  Notably, these policies support Terraform source code vs. rendered plan JSON, for CI support early in the developer workflow.
+
+  The following policies are defined:
+  
+  AWSSEC-0001: Encrypt S3 Buckets
+  AWSSEC-0002: EC2 Instances Must Use Instance Metadata Service Version 2
+  AWSSEC-0003: RDS Instances May Not Be Public
+  AWSSEC-0004: Block Public Access of S3 Buckets
+homeURL: https://rallyhealth.github.io/conftest-policy-packs/
+keywords:
+  - opa
+  - conftest
+  - terraform
+provider:
+  name: Rally Health

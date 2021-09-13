@@ -9,9 +9,8 @@ install:
 .PHONY: codespace-install
 codespace-install:
 	if [ ! -f /home/linuxbrew/.linuxbrew/bin/brew ]; then /bin/bash -c "$$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" && echo 'eval "$$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >> /home/codespace/.profile; fi;
-	eval "$$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-	brew install gcc gcc@5
-	make install
+	eval "$$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)" && brew install gcc gcc@5
+	eval "$$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)" && make install
 
 .PHONY: update
 update:
