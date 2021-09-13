@@ -1,0 +1,16 @@
+---
+# from https://github.com/artifacthub/hub/blob/master/docs/metadata/artifacthub-pkg.yml
+version: 1.0.0
+name: docker-deny-image-unless-from-registry
+displayName: Dockerfiles Must Pull From An Approved Private Registry
+createdAt: 2021-09-10T21:27:55.549418+00:00
+description: |
+  Dockerfiles must pull images from an approved private registry and not from public repositories.
+  The FROM statement must have a private registry prepended, e.g. "our.private.registry/..." as the value.
+homeURL: https://rallyhealth.github.io/conftest-policy-packs/
+keywords:
+  - opa
+  - conftest
+  - docker
+provider:
+  name: Rally Health
