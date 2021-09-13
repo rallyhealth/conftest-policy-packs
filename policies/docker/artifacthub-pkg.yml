@@ -4,13 +4,14 @@ version: 1.0.0
 name: docker-policies
 displayName: OPA Conftest Docker Policies
 createdAt: 2021-09-10T21:27:55.549418+00:00
-description: |
-  These policies enforce security standards against Dockerfiles.
+description: OPA Conftest policies enforcing security standards against Dockerfiles.
+readme: |
+  OPA Conftest policies enforcing security standards against Dockerfiles.
   
   The following policies are defined:
 
-  CTNRSEC-0001: Dockerfiles Must Pull From An Approved Private Registry
-  CTNRSEC-0002: Dockerfiles Should Not Use Environment Variables For Sensitive Values
+  - `CTNRSEC-0001`: Dockerfiles Must Pull From An Approved Private Registry
+  - `CTNRSEC-0002`: Dockerfiles Should Not Use Environment Variables For Sensitive Values
 homeURL: https://rallyhealth.github.io/conftest-policy-packs/
 keywords:
   - opa
