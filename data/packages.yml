@@ -1,3 +1,4 @@
+---
 # PKGSEC-0001
 # One or more npm org scopes under which your internal packages must be published.
 # e.g. myorg/myapp

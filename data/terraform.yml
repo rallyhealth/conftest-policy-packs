@@ -1,0 +1,6 @@
+---
+minimum_required_tags:
+  - owner_application
+  - owner_domain
+  - owner_team
+  - owner_iam_role

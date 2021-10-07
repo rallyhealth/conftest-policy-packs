@@ -1,6 +1,6 @@
 ---
 # from https://github.com/artifacthub/hub/blob/master/docs/metadata/artifacthub-pkg.yml
-version: 1.0.1
+version: 1.0.2
 name: docker-policies
 displayName: OPA Conftest Docker Policies
 createdAt: 2021-09-10T21:27:55.549418+00:00
@@ -15,7 +15,9 @@ readme: |
 install: |
   `conftest pull git::https://github.com/rallyhealth/conftest-policy-packs.git//policies`
 
-  And configure your org-specific `--data` as necessary from [data/](https://github.com/rallyhealth/conftest-policy-packs/tree/main/data),
+  Configure your org-specific `--data` as necessary from [data/](https://github.com/rallyhealth/conftest-policy-packs/tree/main/data)
+
+  Run your conftest command: `conftest verify --data data/ --policy policies/`
 homeURL: https://rallyhealth.github.io/conftest-policy-packs/
 keywords:
   - opa

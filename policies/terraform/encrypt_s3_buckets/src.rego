@@ -6,8 +6,6 @@
 # While the security benefits of server-side bucket encryption are nebulous given practical threat scenarios,
 # those wishing to apply such a control may do so with this policy.
 # You may also be required to enforce this as a compliance checkbox.
-#
-# @enforcement deny
 package terraform_encrypt_s3_buckets
 
 import data.util_functions

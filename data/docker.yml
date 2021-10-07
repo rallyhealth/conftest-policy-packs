@@ -1,3 +1,4 @@
+---
 # CTNRSEC-0001
 # One or more approved registries from which container images may be downloaded.
 approved_private_registries:

@@ -8,7 +8,6 @@
 # Unintentionally exposed S3 Buckets are a frequent source of data breaches and restricting public access helps prevent unintended data exposure.
 #
 # See <https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_public_access_block>.
-#
 package terraform_block_public_acls_s3
 
 import data.util_functions
