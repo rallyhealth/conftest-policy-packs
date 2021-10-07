@@ -12,9 +12,6 @@
 # Each npm user/organization has their own scope, and only you can add packages in your scope.
 # This means you don't have to worry about someone taking your package name ahead of you.
 # Thus it is also a good way to signal official packages for organizations.
-#
-# @enforcement deny
-#
 package nodejs_package_must_have_org_scope
 
 import data.approved_org_scopes

@@ -11,6 +11,10 @@
 * [PKGSEC-0001: NodeJS Packages Must Be Published Under An Organization Scope](#pkgsec-0001-nodejs-packages-must-be-published-under-an-organization-scope)
 * [PKGSEC-0002: NodeJS Projects Must Use A Recent NodeJS Version](#pkgsec-0002-nodejs-projects-must-use-a-recent-nodejs-version)
 
+## Warnings
+
+* [AWSSEC-0005: Resources Must Use Required Tags](#awssec-0005-resources-must-use-required-tags)
+
 ## AWSSEC-0001: Encrypt S3 Buckets
 
 **Severity:** Violation
@@ -579,3 +583,46 @@ violation[{"policyId": policyID, "msg": msg}] {
 ```
 
 _source: [https://github.com/RallyHealth/conftest-policy-packs/policies/packages/nodejs_must_use_recent_version/src.rego](https://github.com/RallyHealth/conftest-policy-packs/policies/packages/nodejs_must_use_recent_version/src.rego)_
+
+## AWSSEC-0005: Resources Must Use Required Tags
+
+**Severity:** Warning
+
+**Resources:** Any Resource
+
+AWS resources should be tagged with a minimum set of organization tags for logistical purposes.
+
+As this policy is executing on Terraform source code, this policy is reported as a "warn" instead of a "violation."
+This policy is best evaluated against a Terraform plan, in which case the policy may need to be adapted to correctly parse a resource in a plan file.
+
+### Rego
+
+```rego
+package terraform_required_tags
+
+import data.minimum_required_tags
+
+policyID := "AWSSEC-0005"
+
+tags_contain_proper_keys(tags) {
+  keys := {key | tags[key]}
+  minimum_tags_set := {x | x := minimum_required_tags[i]}
+  leftover := minimum_tags_set - keys
+
+  # If all minimum_tags exist in keys, the leftover set should be empty - equal to a new set()
+  leftover == set()
+}
+
+warn[msg] {
+  resource := input.resource[resource_type]
+  tags := resource[name].tags
+
+  # Create an array of resources, only if they are missing the minimum tags
+  resources := [sprintf("%v.%v", [resource_type, name]) | not tags_contain_proper_keys(tags)]
+
+  resources != []
+  msg := sprintf("%s: Invalid tags (missing minimum required tags) for the following resource(s): `%v`. Required tags: `%v`", [policyID, resources, minimum_required_tags])
+}
+```
+
+_source: [https://github.com/RallyHealth/conftest-policy-packs/policies/terraform/required_tags/src.rego](https://github.com/RallyHealth/conftest-policy-packs/policies/terraform/required_tags/src.rego)_

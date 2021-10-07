@@ -8,8 +8,6 @@
 # flag or a multi-stage build.
 #
 # If you use a multi-stage build, an `ARG` or `ENV` with a sensitive value **must** not exist in the final built image.
-#
-# @enforcement deny
 package sensitive_keys_in_env_args
 
 import data.docker_utils

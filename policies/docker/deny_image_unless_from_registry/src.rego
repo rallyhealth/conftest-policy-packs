@@ -2,9 +2,6 @@
 #
 # Dockerfiles must pull images from an approved private registry and not from public repositories.
 # The FROM statement must have a private registry prepended, e.g. "our.private.registry/..." as the value.
-#
-# @enforcement deny
-#
 package docker_pull_from_registry
 
 import data.approved_private_registries
