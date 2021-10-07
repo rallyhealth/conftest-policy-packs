@@ -20,7 +20,6 @@ tags_contain_proper_keys(tags) {
 	leftover == set()
 }
 
-# All Conftest rules must be deny[msg] or allow[msg] policies
 warn[msg] {
 	resource := input.resource[resource_type]
 	tags := resource[name].tags
