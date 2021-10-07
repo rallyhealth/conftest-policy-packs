@@ -1,4 +1,6 @@
 ---
+# AWSSEC-0005
+# A list of strings representing required tags that must exist in Terraform AWS resources.
 minimum_required_tags:
   - owner_application
   - owner_domain
