@@ -36,8 +36,7 @@
 		"git": "latest",
 		"github-cli": "latest",
 		"homebrew": "latest",
-		"golang": "latest",
-		"docker-in-docker": "latest"
+		"golang": "latest"
 	},
 	"onCreateCommand": "make install"
 }
