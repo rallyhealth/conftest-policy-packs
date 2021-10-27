@@ -18,6 +18,11 @@ update:
 test:
 	conftest verify --data data/ --policy policies/
 
+.PHONY: integration-test
+integration-test:
+	brew install act
+	act -j test
+
 .PHONY: fmt
 fmt:
 	conftest fmt policies/
