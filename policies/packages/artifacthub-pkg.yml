@@ -1,6 +1,6 @@
 ---
 # from https://github.com/artifacthub/hub/blob/master/docs/metadata/artifacthub-pkg.yml
-version: 1.0.2
+version: 1.1.0
 name: coding-lang-package-policies
 displayName: OPA Conftest Lang Package Policies
 createdAt: 2021-09-10T21:27:55.549418+00:00
@@ -10,8 +10,9 @@ readme: |
 
   The following policies are defined:
 
-  - `PKGSEC-0001`: Packages Must Be Published Under An Organization Scope
+  - `PKGSEC-0001`: NPM Packages Must Be Published Under An Organization Scope
   - `PKGSEC-0002`: NodeJS Projects Must Use A Recent NodeJS Version
+  - `PKGSEC-0003`: NPM Packages Must Be Published To Approved Registry
 install: |
   `conftest pull git::https://github.com/rallyhealth/conftest-policy-packs.git//policies`
 

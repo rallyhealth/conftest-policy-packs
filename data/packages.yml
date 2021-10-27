@@ -4,3 +4,8 @@
 # e.g. myorg/myapp
 approved_org_scopes:
   - myorg
+
+# PKGSEC-0003
+# One or more npm publishConfig registries to which packages may be published.
+approved_publishConfig_registries:
+  - https://registry.npmjs.org
