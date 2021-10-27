@@ -8,7 +8,7 @@ on:
 jobs:
   test:
     name: 'Pre-Commit Checks'
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2.3.5
 
@@ -20,6 +20,10 @@ jobs:
       - uses: actions/setup-go@v2.1.4
         with:
           go-version: '^1.16'
+      
+      - name: Set up Homebrew
+        id: set-up-homebrew
+        uses: Homebrew/actions/setup-homebrew@master
 
       # If the version of konstraint updates during the lifetime of an open PR, the
       # caching benefits will disappear.
@@ -28,7 +32,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: |
-            ~/Library/Caches/go-build
+            ~/.cache/go-build
             ~/go/
           key: ${{ runner.os }}-go-${{ github.ref }}
           restore-keys: |
