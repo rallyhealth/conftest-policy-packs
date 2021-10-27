@@ -4,7 +4,7 @@ repos:
     hooks:
       - id: conftest-fmt
       - id: conftest-verify
-        args: ['--data', 'data/', '--policy', 'policies/']
+        args: ['--data', 'data/', '--policy', 'policies/', '--output', 'github']
 
   - repo: local
     hooks:
