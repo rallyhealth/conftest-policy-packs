@@ -1,5 +1,13 @@
 package nodejs_package_must_have_org_scope
 
+mockConftestData := {
+	"MOCKED": true,
+	"file": {
+		"dir": "/Users/testuser/Documents/conftest-policy-packs",
+		"name": "package.json",
+	},
+}
+
 test_org_scope {
 	count(violation) == 0 with input as {
 		"author": "Test author",
@@ -16,6 +24,7 @@ test_org_scope {
 		"scripts": {"test": "jest"},
 		"version": "1.0.0",
 	}
+		 with data.conftest as mockConftestData
 }
 
 test_missing_scope {
@@ -34,6 +43,7 @@ test_missing_scope {
 		"scripts": {"test": "jest"},
 		"version": "1.0.0",
 	}
+		 with data.conftest as mockConftestData
 }
 
 test_wrong_scope {
@@ -52,24 +62,5 @@ test_wrong_scope {
 		"scripts": {"test": "jest"},
 		"version": "1.0.0",
 	}
-}
-
-# npm requires the "name" and "version" fields. If name is missing the package.json file is invalid.
-# Thus there isn't a violation until the package is properly formatted, in which case the above tests
-# should catch it.
-test_invalid_file_missing_name {
-	count(violation) == 0 with input as {
-		"author": "Test author",
-		"bugs": {"url": "https://github.com/rallyhealth/conftest-policy-packs/issues"},
-		"description": "Test scope",
-		"homepage": "https://github.com/rallyhealth/conftest-policy-packs#readme",
-		"license": "ISC",
-		"main": "index.js",
-		"repository": {
-			"type": "git",
-			"url": "git+git@github.com:rallyhealth/conftest-policy-packs.git",
-		},
-		"scripts": {"test": "jest"},
-		"version": "1.0.0",
-	}
+		 with data.conftest as mockConftestData
 }

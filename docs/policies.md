@@ -8,8 +8,9 @@
 * [AWSSEC-0004: Block Public Access of S3 Buckets](#awssec-0004-block-public-access-of-s3-buckets)
 * [CTNRSEC-0001: Dockerfiles Must Pull From An Approved Private Registry](#ctnrsec-0001-dockerfiles-must-pull-from-an-approved-private-registry)
 * [CTNRSEC-0002: Dockerfiles Should Not Use Environment Variables For Sensitive Values](#ctnrsec-0002-dockerfiles-should-not-use-environment-variables-for-sensitive-values)
-* [PKGSEC-0001: NodeJS Packages Must Be Published Under An Organization Scope](#pkgsec-0001-nodejs-packages-must-be-published-under-an-organization-scope)
+* [PKGSEC-0001: NPM Packages Must Be Published Under An Organization Scope](#pkgsec-0001-npm-packages-must-be-published-under-an-organization-scope)
 * [PKGSEC-0002: NodeJS Projects Must Use A Recent NodeJS Version](#pkgsec-0002-nodejs-projects-must-use-a-recent-nodejs-version)
+* [PKGSEC-0003: NPM Packages Must Be Published To Approved Registry](#pkgsec-0003-npm-packages-must-be-published-to-approved-registry)
 
 ## Warnings
 
@@ -375,7 +376,7 @@ violation[{"policyId": policyID, "msg": msg}] {
 
 _source: [https://github.com/RallyHealth/conftest-policy-packs/policies/docker/sensitive_keys_in_env_args/src.rego](https://github.com/RallyHealth/conftest-policy-packs/policies/docker/sensitive_keys_in_env_args/src.rego)_
 
-## PKGSEC-0001: NodeJS Packages Must Be Published Under An Organization Scope
+## PKGSEC-0001: NPM Packages Must Be Published Under An Organization Scope
 
 **Severity:** Violation
 
@@ -413,7 +414,7 @@ violation[{"policyId": policyID, "msg": msg}] {
   packages_functions.is_package_json(input)
   package_name := input.name
   not has_org_scope(package_name)
-  msg := sprintf("NodeJS packages must be wrapped beneath an organization scope (e.g. `@orgscope/mypackage`). `%s` does not use any organization scope. Approved scopes are: `%v`.", [package_name, approved_org_scopes])
+  msg := sprintf("NPM packages must be wrapped beneath an organization scope (e.g. `@orgscope/mypackage`). `%s` does not use any organization scope. Approved scopes are: `%v`.", [package_name, approved_org_scopes])
 }
 
 violation[{"policyId": policyID, "msg": msg}] {
@@ -583,6 +584,61 @@ violation[{"policyId": policyID, "msg": msg}] {
 ```
 
 _source: [https://github.com/RallyHealth/conftest-policy-packs/policies/packages/nodejs_must_use_recent_version/src.rego](https://github.com/RallyHealth/conftest-policy-packs/policies/packages/nodejs_must_use_recent_version/src.rego)_
+
+## PKGSEC-0003: NPM Packages Must Be Published To Approved Registry
+
+**Severity:** Violation
+
+**Resources:** Any Resource
+
+NodeJS packages with a `publishConfig` object must have the `registry` field set to an approved organizational registry.
+
+For more information about the `registry` field of the `publishConfig` object, see <https://docs.npmjs.com/cli/v7/using-npm/registry#how-can-i-prevent-my-package-from-being-published-in-the-official-registry>.
+
+### Rego
+
+```rego
+package nodejs_package_must_use_org_publish_config
+
+import data.approved_publishConfig_registries
+import data.packages_functions
+import data.util_functions
+
+policyID := "PKGSEC-0003"
+
+approved_registries := {registry_name | registry_name := approved_publishConfig_registries[i]}
+
+violation[{"policyId": policyID, "msg": msg}] {
+  packages_functions.is_package_json(input)
+  util_functions.has_key(input, "publishConfig")
+
+  publish_config := input.publishConfig
+  util_functions.has_key(publish_config, "registry")
+
+  not approved_registries[publish_config.registry]
+
+  msg := sprintf("NPM packages must have a `publishConfig` field set to an approved registry. An unapproved registry is listed. Approved registries are: `%v`.", [approved_publishConfig_registries])
+}
+
+violation[{"policyId": policyID, "msg": msg}] {
+  packages_functions.is_package_json(input)
+  util_functions.has_key(input, "publishConfig")
+
+  publish_config := input.publishConfig
+  not util_functions.has_key(publish_config, "registry")
+
+  msg := sprintf("NPM packages must have a `publishConfig` field set to an approved registry. No `registry` is set. Approved registries are: `%v`.", [approved_publishConfig_registries])
+}
+
+violation[{"policyId": policyID, "msg": msg}] {
+  packages_functions.is_package_json(input)
+  not util_functions.has_key(input, "publishConfig")
+
+  msg := sprintf("NPM packages must have a `publishConfig` field set to an approved registry. No `publishConfig` is set. Approved registries are: `%v`.", [approved_publishConfig_registries])
+}
+```
+
+_source: [https://github.com/RallyHealth/conftest-policy-packs/policies/packages/nodejs_use_publishConfig/src.rego](https://github.com/RallyHealth/conftest-policy-packs/policies/packages/nodejs_use_publishConfig/src.rego)_
 
 ## AWSSEC-0005: Resources Must Use Required Tags
 

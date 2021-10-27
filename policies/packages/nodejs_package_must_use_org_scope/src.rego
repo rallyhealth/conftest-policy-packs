@@ -1,4 +1,4 @@
-# @title NodeJS Packages Must Be Published Under An Organization Scope
+# @title NPM Packages Must Be Published Under An Organization Scope
 #
 # NodeJS packages are subject to typosquatting, in which a malicious package is published
 # with a slight misspelling. The aim is to infect end users who misspell your package.
@@ -28,7 +28,7 @@ violation[{"policyId": policyID, "msg": msg}] {
 	packages_functions.is_package_json(input)
 	package_name := input.name
 	not has_org_scope(package_name)
-	msg := sprintf("NodeJS packages must be wrapped beneath an organization scope (e.g. `@orgscope/mypackage`). `%s` does not use any organization scope. Approved scopes are: `%v`.", [package_name, approved_org_scopes])
+	msg := sprintf("NPM packages must be wrapped beneath an organization scope (e.g. `@orgscope/mypackage`). `%s` does not use any organization scope. Approved scopes are: `%v`.", [package_name, approved_org_scopes])
 }
 
 violation[{"policyId": policyID, "msg": msg}] {
