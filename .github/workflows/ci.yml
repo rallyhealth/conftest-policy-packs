@@ -10,7 +10,7 @@ jobs:
     name: 'Pre-Commit Checks'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2.3.5
+      - uses: actions/checkout@v2.4.0
 
       # Pre-req for the pre-commit action
       - uses: actions/setup-python@v2.2.2
