@@ -44,7 +44,7 @@ jobs:
           ./scripts/ci-go-deps.sh
 
       - name: 'Pre-Commit Checks'
-        uses: pre-commit/action@v2.0.3
+        uses: pre-commit/action@v3.0.0
 
       - name: "Ensure data files are correct file type"
         run: |
