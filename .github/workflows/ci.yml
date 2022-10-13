@@ -29,7 +29,7 @@ jobs:
       # caching benefits will disappear.
       # In the general case, this cuts ~3 minutes from this job.
       - name: 'Cache Go'
-        uses: actions/cache@v2
+        uses: actions/cache@v3.0.11
         with:
           path: |
             ~/.cache/go-build
